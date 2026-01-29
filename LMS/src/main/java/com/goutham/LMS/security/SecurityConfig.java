@@ -17,12 +17,12 @@ public class SecurityConfig {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
         //define query to retrieve a user by username
         jdbcUserDetailsManager.setUsersByUsernameQuery(
-                "select user_id,pw,active from users where user_id=?"
+                "select email,password,active from registrations where email=?"
         );
 
         //define query to retrieve authorities/roles by username
         jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
-                "select user_id,role from roles where user_id=?"
+                "select email,role from registrations where email=?"
         );
 
         return jdbcUserDetailsManager;
@@ -32,9 +32,12 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/showMyLoginPage",
-                                "/register",
-                                "/css/**", "/js/**", "/images/**"
-                        ).permitAll()
+                                "/showRegistrationPage",
+                                "/users/**",
+
+                        "/css/**", "/js/**", "/images/**"
+                        )
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form->
