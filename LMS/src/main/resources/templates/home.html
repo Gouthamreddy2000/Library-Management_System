@@ -1,15 +1,79 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Library Management System</title>
-</head>
-<body>
-<h1> Hello! Welcome to LMS</h1>
-<form action="#" th:action="@{/logout}" method="POST">
 
-    <input type="submit" value="Logout"/>
-</form>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+
+    <title>Book Directory</title>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h3>Book Directory</h3>
+    <hr>
+
+    <!-- Add a button -->
+    <a th:href="@{/showFormForAdd}"
+       class="btn btn-primary btn-sm mb-3">
+        Add Book
+    </a>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Isbn</th>
+            <th>Category</th>
+            <th>Total Copies</th>
+            <th>Available Copies</th>
+            <th>Published Year</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="tempBook : ${books}">
+
+            <td th:text="${tempBook.title}"></td>
+            <td th:text="${tempBook.author}"></td>
+            <td th:text="${tempBook.isbn}"></td>
+            <td th:text="${tempBook.category}"></td>
+            <td th:text="${tempBook.totalCopies}"></td>
+            <td th:text="${tempBook.availableCopies}"></td>
+            <td th:text="${tempBook.publishedYear}"></td>
+
+            <td>
+                <a th:href="@{/showFormForUpdate(bookId=${tempBook.id})}"
+                   class="btn btn-info btn-sm">
+                    Update
+                </a>
+
+                <a th:href="@{/delete(bookId=${tempBook.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure want to delete this book');">
+                    Delete
+                </a>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+    <form action="#" th:action="@{/logout}" method="POST">
+
+        <input type="submit" value="Logout"/>
+    </form>
+
+</div>
 
 </body>
 </html>
+
+
