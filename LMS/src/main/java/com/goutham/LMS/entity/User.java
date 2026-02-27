@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int user_id;
 
     @Column(name="first_name")
     private String firstName;
@@ -27,26 +27,28 @@ public class User {
     @Column(name="phone_number")
     private String phoneNumber;
 
+
     public User(){
 
     }
 
-    public User(int id, String firstName, String lastName, String password, String confirmPassword, String email, String phoneNumber) {
-        this.id = id;
+    public User(int user_id, String firstName, String lastName, String password, String confirmPassword, String email, String phoneNumber) {
+        this.user_id = user_id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.confirmPassword=confirmPassword;
         this.email = email;
         this.phoneNumber = phoneNumber;
+
     }
 
-    public int getId() {
-        return id;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     public String getFirstName() {
@@ -97,10 +99,11 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "user_id=" + user_id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", password='" + password + '\'' +

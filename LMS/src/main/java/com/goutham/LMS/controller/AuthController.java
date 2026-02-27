@@ -1,8 +1,10 @@
 package com.goutham.LMS.controller;
 
 import com.goutham.LMS.entity.Book;
+import com.goutham.LMS.entity.BorrowBook;
 import com.goutham.LMS.entity.User;
 import com.goutham.LMS.service.BookService;
+import com.goutham.LMS.service.BorrowBookService;
 import com.goutham.LMS.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +16,11 @@ import java.util.List;
 public class AuthController {
     private UserService userService;
     private BookService bookService;
-    public AuthController(UserService theUserService, BookService theBookService){
+    private BorrowBookService borrowBookService;
+    public AuthController(UserService theUserService, BookService theBookService, BorrowBookService theBorrowBookService){
         userService=theUserService;
         bookService=theBookService;
+        borrowBookService=theBorrowBookService;
     }
     @GetMapping("/")
     public String myHome(Model theModel){
@@ -60,5 +64,17 @@ public class AuthController {
         bookService.save(theBook);
         return "redirect:/";
     }
+    @GetMapping("/books/search")
+    public String searchBooks(@RequestParam("keyword") String theKeyword, Model theModel){
+        List<Book> theBooks=bookService.search(theKeyword);
+        theModel.addAttribute("books",theBooks);
+        return "home";
+    }
 
+    @GetMapping("/showFormForBorrow")
+    public String showFormForBorrow(@RequestParam("bookId") int theId){
+        BorrowBook theBorrowBook=borrowBookService.findById(theId);
+        System.out.println(theBorrowBook);
+        return "home";
+    }
 }

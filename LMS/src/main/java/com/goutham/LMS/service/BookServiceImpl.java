@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
-    public BookRepository bookRepository;
+    private BookRepository bookRepository;
 
     public BookServiceImpl(BookRepository theBookRepository){
         bookRepository=theBookRepository;
@@ -45,5 +45,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(int theId) {
       bookRepository.deleteById(theId);
+    }
+
+    @Override
+    public List<Book> search(String keyword) {
+        return bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrIsbnContainingIgnoreCase(keyword,keyword,keyword);
+
     }
 }

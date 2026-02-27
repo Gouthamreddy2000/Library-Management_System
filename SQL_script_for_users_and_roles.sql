@@ -8,7 +8,7 @@ CREATE TABLE `users` (
   `active` tinyint NOT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+users
 INSERT INTO `users` 
 VALUES 
 ('goutham','{noop}test123',1),
@@ -37,41 +37,31 @@ VALUES
 ('susan','ROLE_STUDENT');
 
 
-
-
-drop table `registrations`
-USE `library_db`;
-
-DROP TABLE IF EXISTS registrations;
-
-CREATE TABLE registrations (
-  id INT NOT NULL AUTO_INCREMENT,
-  first_name CHAR(68) NOT NULL,
-  last_name CHAR(68) NOT NULL,
-  password VARCHAR(68) NOT NULL,
-  confirm_password VARCHAR(68) NOT NULL,
-  email VARCHAR(68) NOT NULL,
-  phone_number VARCHAR(20) NOT NULL,
-  active TINYINT NOT NULL DEFAULT 1,
-  PRIMARY KEY (id),
-  UNIQUE KEY uk_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-ALTER TABLE registrations
-MODIFY active TINYINT(1) NOT NULL DEFAULT 1;
-
-ALTER TABLE registrations DROP PRIMARY KEY;
+INSERT INTO registrations
+(first_name, last_name, password, confirm_password, email, phone_number, active, role)
+VALUES
+(
+'Admin',
+'Admin',
+'{noop}admin123',
+'{noop}admin123',
+'admin@gmail.com',
+'9999999999',
+1,
+'ROLE_ADMIN'
+);
 
 
 
-ALTER TABLE registrations
-ADD COLUMN role VARCHAR(50) DEFAULT 'ROLE_USER';
-
-UPDATE registrations
-SET password = CONCAT('{noop}', password)
-WHERE id > 0
-AND password NOT LIKE '{noop}%';
-
-
-
+INSERT INTO books
+(title, author, isbn, category, total_copies, available_copies, published_year)
+VALUES
+(
+'Spring Boot in Action',
+'Craig Walls',
+'9781617292545',
+'Technology',
+10,
+10,
+2022
+);

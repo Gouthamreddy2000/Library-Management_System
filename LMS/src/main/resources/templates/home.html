@@ -1,79 +1,157 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+          crossorigin="anonymous">
 
     <title>Book Directory</title>
+
+    <style>
+        body { background: #f7f7fb; }
+        .page-card { border: 0; border-radius: 16px; }
+        .book-card { border: 0; border-radius: 16px; }
+        .book-title { line-height: 1.2; }
+        .muted { color: rgba(0,0,0,.6); }
+        .badge { font-weight: 600; }
+        .top-actions .form-control { min-width: 260px; }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="container py-4">
 
-    <h3>Book Directory</h3>
-    <hr>
+    <!-- Page Header -->
+    <div class="card page-card shadow-sm">
+        <div class="card-body">
 
-    <!-- Add a button -->
-    <a th:href="@{/showFormForAdd}"
-       class="btn btn-primary btn-sm mb-3">
-        Add Book
-    </a>
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div>
+                    <h3 class="mb-1">Book Directory</h3>
+                    <div class="muted">Manage books, stock, and details</div>
+                </div>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-        <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Isbn</th>
-            <th>Category</th>
-            <th>Total Copies</th>
-            <th>Available Copies</th>
-            <th>Published Year</th>
-            <th>Action</th>
-        </tr>
-        </thead>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-dark">
+                        Logout
+                    </button>
+                </form>
+            </div>
 
-        <tbody>
-        <tr th:each="tempBook : ${books}">
+            <hr class="my-4">
 
-            <td th:text="${tempBook.title}"></td>
-            <td th:text="${tempBook.author}"></td>
-            <td th:text="${tempBook.isbn}"></td>
-            <td th:text="${tempBook.category}"></td>
-            <td th:text="${tempBook.totalCopies}"></td>
-            <td th:text="${tempBook.availableCopies}"></td>
-            <td th:text="${tempBook.publishedYear}"></td>
+            <!-- Top Actions -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 top-actions mb-3">
 
-            <td>
-                <a th:href="@{/showFormForUpdate(bookId=${tempBook.id})}"
-                   class="btn btn-info btn-sm">
-                    Update
-                </a>
+                <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex gap-2">
+                    <a th:href="@{/showFormForAdd}" class="btn btn-primary">
+                        + Add Book
+                    </a>
+                </div>
 
-                <a th:href="@{/delete(bookId=${tempBook.id})}"
-                   class="btn btn-danger btn-sm"
-                   onclick="return confirm('Are you sure want to delete this book');">
-                    Delete
-                </a>
-            </td>
+                <!-- Optional Search (works only if you create /books/search GET mapping) -->
+                <form class="d-flex" th:action="@{/books/search}" method="get">
+                    <input class="form-control me-2" type="search" name="keyword"
+                           placeholder="Search title / author / isbn" aria-label="Search">
+                    <button class="btn btn-outline-dark" type="submit">Search</button>
 
-        </tr>
-        </tbody>
-    </table>
-    <form action="#" th:action="@{/logout}" method="POST">
+                    <a th:href="@{/}" class="btn btn-outline-secondary ms-2">
+                        Clear
+                    </a>
+                </form>
 
-        <input type="submit" value="Logout"/>
-    </form>
+            </div>
+
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(books)}" class="alert alert-light border">
+                No books found. Click <strong>Add Book</strong> to create your first record.
+            </div>
+
+            <!-- Books Grid -->
+            <div class="row g-3" th:if="${not #lists.isEmpty(books)}">
+                <div class="col-12 col-sm-6 col-lg-4" th:each="tempBook : ${books}">
+
+                    <div class="card book-card shadow-sm h-100">
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div>
+                                    <h5 class="book-title mb-1" th:text="${tempBook.title}">Book Title</h5>
+                                    <div class="text-muted" th:text="'by ' + ${tempBook.author}">by Author</div>
+                                </div>
+
+                                <span class="badge bg-success"
+                                      th:if="${tempBook.availableCopies > 0}"
+                                      th:text="'Available ' + ${tempBook.availableCopies}">
+                                    Available
+                                </span>
+                                <span class="badge bg-danger"
+                                      th:if="${tempBook.availableCopies <= 0}">
+                                    Out of Stock
+                                </span>
+                            </div>
+
+                            <div class="mt-3 small">
+                                <div class="d-flex justify-content-between">
+                                    <span class="muted">ISBN</span>
+                                    <span th:text="${tempBook.isbn}">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="muted">Category</span>
+                                    <span th:text="${tempBook.category}">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="muted">Published</span>
+                                    <span th:text="${tempBook.publishedYear}">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="muted">Total Copies</span>
+                                    <span th:text="${tempBook.totalCopies}">0</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div  class="d-flex gap-2">
+                            <a th:href="@{/showFormForBorrow(bookId=${tempBook.book_id})}" class="btn btn-primary">
+                                Borrow
+                            </a>
+                        </div>
+                        <div  class="d-flex gap-2">
+                            <a th:href="@{/showFormForReturn(bookId=${tempBook.book_id})}" class="btn btn-primary">
+                                Return
+                            </a>
+                        </div>
+
+                        <div sec:authorize="hasRole('ROLE_ADMIN')" class="card-footer bg-white border-0 pt-0 pb-3 px-3">
+                            <div class="d-flex gap-2">
+                                <a th:href="@{/showFormForUpdate(bookId=${tempBook.book_id})}"
+                                   class="btn btn-outline-primary btn-sm w-50">
+                                    Update
+                                </a>
+
+                                <a th:href="@{/delete(bookId=${tempBook.book_id})}"
+                                   class="btn btn-outline-danger btn-sm w-50"
+                                   onclick="return confirm('Are you sure want to delete this book');">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 </div>
 
 </body>
 </html>
-
-
