@@ -55,6 +55,10 @@
                         + Add Book
                     </a>
                 </div>
+                <span class="badge bg-success"
+                      th:text="'Hello'+ ${currentUser}">
+
+                                </span>
 
                 <!-- Optional Search (works only if you create /books/search GET mapping) -->
                 <form class="d-flex" th:action="@{/books/search}" method="get">
@@ -119,24 +123,24 @@
 
                         </div>
                         <div  class="d-flex gap-2">
-                            <a th:href="@{/showFormForBorrow(bookId=${tempBook.book_id})}" class="btn btn-primary">
+                            <a th:href="@{/showFormForBorrow(bookId=${tempBook.bookId})}" class="btn btn-primary">
                                 Borrow
                             </a>
                         </div>
                         <div  class="d-flex gap-2">
-                            <a th:href="@{/showFormForReturn(bookId=${tempBook.book_id})}" class="btn btn-primary">
+                            <a th:href="@{/showFormForReturn(bookId=${tempBook.bookId})}" class="btn btn-primary">
                                 Return
                             </a>
                         </div>
 
                         <div sec:authorize="hasRole('ROLE_ADMIN')" class="card-footer bg-white border-0 pt-0 pb-3 px-3">
                             <div class="d-flex gap-2">
-                                <a th:href="@{/showFormForUpdate(bookId=${tempBook.book_id})}"
+                                <a th:href="@{/showFormForUpdate(bookId=${tempBook.bookId})}"
                                    class="btn btn-outline-primary btn-sm w-50">
                                     Update
                                 </a>
 
-                                <a th:href="@{/delete(bookId=${tempBook.book_id})}"
+                                <a th:href="@{/delete(bookId=${tempBook.bookId})}"
                                    class="btn btn-outline-danger btn-sm w-50"
                                    onclick="return confirm('Are you sure want to delete this book');">
                                     Delete

@@ -1,15 +1,18 @@
 package com.goutham.LMS.controller;
 
+import com.goutham.LMS.dao.BorrowBookRepository;
 import com.goutham.LMS.entity.Book;
 import com.goutham.LMS.entity.BorrowBook;
 import com.goutham.LMS.entity.User;
 import com.goutham.LMS.service.BookService;
 import com.goutham.LMS.service.BorrowBookService;
 import com.goutham.LMS.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -17,15 +20,19 @@ public class AuthController {
     private UserService userService;
     private BookService bookService;
     private BorrowBookService borrowBookService;
-    public AuthController(UserService theUserService, BookService theBookService, BorrowBookService theBorrowBookService){
+    private BorrowBookRepository borrowBookRepository;
+    public AuthController(UserService theUserService, BookService theBookService, BorrowBookService theBorrowBookService, BorrowBookRepository theBorrowBookRepository){
         userService=theUserService;
         bookService=theBookService;
         borrowBookService=theBorrowBookService;
+        borrowBookRepository=theBorrowBookRepository;
     }
     @GetMapping("/")
-    public String myHome(Model theModel){
+    public String myHome(Model theModel, Authentication authentication){
         List<Book> theBooks=bookService.findAll();
+        String userName=authentication.getName();
         theModel.addAttribute("books",theBooks);
+        theModel.addAttribute("currentUser", userName);
         return "home";
     }
     @GetMapping("/showMyLoginPage")
@@ -72,9 +79,29 @@ public class AuthController {
     }
 
     @GetMapping("/showFormForBorrow")
-    public String showFormForBorrow(@RequestParam("bookId") int theId){
-        BorrowBook theBorrowBook=borrowBookService.findById(theId);
+    public String showFormForBorrow(@RequestParam("bookId") int theId, Authentication authentication){
+        BorrowBook theBorrowBook=new BorrowBook();
+        String email=authentication.getName();
+        User user=userService.findByEmail(email);
+        int userId=user.getUser_id();
+        theBorrowBook.setBookId(theId);
+        theBorrowBook.setUserId(userId);
+        theBorrowBook.setBorrowed_date(LocalDateTime.now());
+        theBorrowBook.setStatus(BorrowBook.BorrowStatus.BORROWED);
+        Book theBook=bookService.findById(theId);
+        theBook.setAvailableCopies(theBook.getAvailableCopies()-1);
+        borrowBookService.save(theBorrowBook);
         System.out.println(theBorrowBook);
-        return "home";
+        return "redirect:/";
+    }
+
+    @GetMapping("/showFormForReturn")
+    public String showFormForReturn(@RequestParam("bookId") int theId, Authentication authentication){
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        borrowBookService.returnBook(user.getUser_id(), theId);
+
+        return "redirect:/";
     }
 }

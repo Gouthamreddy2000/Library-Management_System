@@ -13,10 +13,10 @@ public class BorrowBook {
     private int id;
 
     @Column(name="user_id")
-    private int user_id;
+    private int userId;
 
     @Column(name="book_id")
-    private int book_id;
+    private int bookId;
     @Column(name="borrowed_date")
     private LocalDateTime borrowed_date;
     @Column(name="due_date")
@@ -24,17 +24,27 @@ public class BorrowBook {
     @Column(name="returned_date")
     private LocalDateTime returned_date;
 
-    private BorrowBook(){
+    public enum BorrowStatus {
+        BORROWED,
+        RETURNED,
+        OVERDUE
+    }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private BorrowStatus status;
+
+    public BorrowBook(){
 
     }
 
-    public BorrowBook(int id, int user_id, int book_id, LocalDateTime borrowed_date, LocalDateTime due_date, LocalDateTime returned_date) {
+    public BorrowBook(int id, int userId, int bookId, LocalDateTime borrowed_date, LocalDateTime due_date, LocalDateTime returned_date, BorrowStatus status) {
         this.id = id;
-        this.user_id = user_id;
-        this.book_id = book_id;
+        this.userId = userId;
+        this.bookId = bookId;
         this.borrowed_date = borrowed_date;
         this.due_date = due_date;
         this.returned_date = returned_date;
+        this.status = status;
     }
 
     public int getId() {
@@ -45,20 +55,20 @@ public class BorrowBook {
         this.id = id;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getBookId() {
+        return bookId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
-    public int getBook_id() {
-        return book_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setBook_id(int book_id) {
-        this.book_id = book_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public LocalDateTime getBorrowed_date() {
@@ -85,15 +95,24 @@ public class BorrowBook {
         this.returned_date = returned_date;
     }
 
+    public BorrowStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BorrowStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "BorrowBook{" +
                 "id=" + id +
-                ", user_id=" + user_id +
-                ", book_id=" + book_id +
+                ", userId=" + userId +
+                ", bookId=" + bookId +
                 ", borrowed_date=" + borrowed_date +
                 ", due_date=" + due_date +
                 ", returned_date=" + returned_date +
+                ", status=" + status +
                 '}';
     }
 }
